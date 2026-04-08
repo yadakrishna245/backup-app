@@ -13,11 +13,14 @@ public class Controller {
 
     private S3Client s3 = S3Client.builder()
             .region(software.amazon.awssdk.regions.Region.AP_SOUTH_1)
-            .credentialsProvider(StaticCredentialsProvider.create(
-		AwsBasicCredentials.create(
-    System.getenv("AWS_ACCESS_KEY"),
-    System.getenv("AWS_SECRET_KEY")
-)
+            .credentialsProvider(
+                    StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(
+                                    System.getenv("AWS_ACCESS_KEY"),
+                                    System.getenv("AWS_SECRET_KEY")
+                            )
+                    )
+            )
             .build();
 
     @PostMapping("/upload")
