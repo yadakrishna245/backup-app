@@ -7,12 +7,6 @@ pipeline {
 
     stages {
 
-        stage('Clone') {
-            steps {
-                git 'git@github.com:yadakrishna245/backup-app.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh 'cd backend && JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 mvn clean package'
