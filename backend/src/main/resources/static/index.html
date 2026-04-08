@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backup App</title>
+</head>
+<body>
+
+<h2>Upload File</h2>
+<input type="file" id="file"/>
+<button onclick="upload()">Upload</button>
+
+<h2>Restore File</h2>
+<input type="text" id="filename" placeholder="Enter filename"/>
+<button onclick="restore()">Download</button>
+
+<script>
+function upload() {
+    let file = document.getElementById("file").files[0];
+    let formData = new FormData();
+    formData.append("file", file);
+
+    fetch("/upload", {
+        method: "POST",
+        body: formData
+    }).then(res => alert("Uploaded"));
+}
+
+function restore() {
+    let name = document.getElementById("filename").value;
+
+    fetch("/restore/" + name)
+    .then(res => res.blob())
+    .then(blob => {
+        let a = document.createElement("a");
+        a.href = window.URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+    });
+}
+</script>
+
+</body>
+</html>
