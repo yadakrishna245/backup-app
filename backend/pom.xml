@@ -11,7 +11,7 @@
     <name>Backup App</name>
     <packaging>jar</packaging>
 
-    <!-- ✅ Spring Boot 3 (supports modern Java) -->
+    <!-- ✅ Spring Boot 3 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -26,10 +26,17 @@
     <!-- ✅ Dependencies -->
     <dependencies>
 
-        <!-- Web (REST APIs) -->
+        <!-- Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- ✅ AWS S3 SDK (FIXED VERSION) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.25.20</version>
         </dependency>
 
     </dependencies>
@@ -38,7 +45,7 @@
     <build>
         <plugins>
 
-            <!-- Compiler (IMPORTANT) -->
+            <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -48,7 +55,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Spring Boot JAR -->
+            <!-- Spring Boot Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
