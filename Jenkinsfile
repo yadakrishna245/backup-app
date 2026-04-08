@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         IMAGE_NAME = "backup-app"
+        AWS_ACCESS_KEY = credentials('aws-access-key')
+        AWS_SECRET_KEY = credentials('aws-secret-key')
     }
 
     stages {
@@ -21,9 +23,14 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker stop backup-app || true'
-                sh 'docker rm backup-app || true'
-                sh 'docker run -d -p 9090:9090 --name backup-app $IMAGE_NAME'
+                sh '''
+                docker stop backup-app || true
+                docker rm backup-app || true
+                docker run -d -p 9090:9090 \
+                -e AWS_ACCESS_KEY=$AWS_ACCESS_KEY \
+                -e AWS_SECRET_KEY=$AWS_SECRET_KEY \
+                --name backup-app $IMAGE_NAME
+                '''
             }
         }
     }
