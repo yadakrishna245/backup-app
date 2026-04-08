@@ -9,7 +9,7 @@ import software.amazon.awssdk.services.s3.model.*;
 @RestController
 public class Controller {
 
-    private final String bucketName = "backup-app-storage";
+    private final String bucketName = "backup-app-storage1";
 
     private S3Client s3 = S3Client.builder()
             .region(software.amazon.awssdk.regions.Region.AP_SOUTH_1)
