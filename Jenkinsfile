@@ -9,7 +9,7 @@ pipeline {
 
         stage('Clone') {
             steps {
-                git 'git@github.com:your-username/backup-app.git'
+                git 'git@github.com:yadakrishna245/backup-app.git'
             }
         }
 
