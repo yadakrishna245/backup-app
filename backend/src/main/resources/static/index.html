@@ -13,15 +13,14 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* 🌌 Space Background */
 body {
     height: 100vh;
     background: radial-gradient(circle at top, #0f2027, #000000);
-    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
+    overflow: hidden;
 }
 
 /* Stars */
@@ -31,15 +30,15 @@ body::before {
     width: 100%;
     height: 100%;
     background: transparent url('https://www.transparenttextures.com/patterns/stardust.png');
-    animation: moveStars 60s linear infinite;
+    animation: stars 60s linear infinite;
 }
 
-@keyframes moveStars {
+@keyframes stars {
     from {background-position: 0 0;}
     to {background-position: 1000px 1000px;}
 }
 
-/* Glass Card */
+/* Container */
 .container {
     position: relative;
     backdrop-filter: blur(15px);
@@ -92,6 +91,22 @@ button:hover {
     transform: scale(1.05);
 }
 
+/* Progress Bar */
+.progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    margin-top: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #00ffcc;
+}
+
 /* Status */
 .status {
     margin-top: 8px;
@@ -119,16 +134,22 @@ button:hover {
         Backup today to avoid losing important data tomorrow.
     </div>
 
-    <!-- Upload -->
-    <h3>📤 Upload File</h3>
-    <input type="file" id="file">
+    <!-- Upload Section -->
+    <h3>📤 Upload File / Folder</h3>
+    <input type="file" id="file" webkitdirectory multiple>
     <button onclick="upload()">Upload</button>
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
     <div id="uploadStatus" class="status"></div>
 
-    <!-- Restore -->
+    <!-- Restore Section -->
     <h3 style="margin-top:15px;">📥 Restore File</h3>
     <input type="text" id="filename" placeholder="Enter filename">
     <button onclick="restore()">Download</button>
+
     <div id="restoreStatus" class="status"></div>
 
     <!-- Contact -->
@@ -140,27 +161,39 @@ button:hover {
 </div>
 
 <script>
-function upload() {
-    let file = document.getElementById("file").files[0];
+let progressBar = document.getElementById("progressBar");
 
-    if (!file) {
-        alert("Please select a file");
+function upload() {
+    let files = document.getElementById("file").files;
+
+    if (files.length === 0) {
+        alert("Please select file or folder");
         return;
     }
 
     let formData = new FormData();
-    formData.append("file", file);
 
-    fetch("/upload", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => {
-        document.getElementById("uploadStatus").innerText = "✅ Uploaded successfully!";
-    })
-    .catch(() => {
+    for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i]);
+    }
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/upload");
+
+    xhr.upload.onprogress = function(e) {
+        let percent = (e.loaded / e.total) * 100;
+        progressBar.style.width = percent + "%";
+    };
+
+    xhr.onload = function() {
+        document.getElementById("uploadStatus").innerText = "✅ Upload successful!";
+    };
+
+    xhr.onerror = function() {
         document.getElementById("uploadStatus").innerText = "❌ Upload failed!";
-    });
+    };
+
+    xhr.send(formData);
 }
 
 function restore() {
@@ -172,7 +205,10 @@ function restore() {
     }
 
     fetch("/restore/" + name)
-    .then(res => res.blob())
+    .then(res => {
+        if (!res.ok) throw new Error();
+        return res.blob();
+    })
     .then(blob => {
         let url = window.URL.createObjectURL(blob);
         let a = document.createElement("a");
