@@ -13,6 +13,7 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* 🌌 Space Background */
 body {
     height: 100vh;
     background: radial-gradient(circle at top, #0f2027, #000000);
@@ -20,10 +21,29 @@ body {
     justify-content: center;
     align-items: center;
     color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Stars Animation */
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.4;
+    animation: moveStars 60s linear infinite;
+}
+
+@keyframes moveStars {
+    from {background-position: 0 0;}
+    to {background-position: 1000px 1000px;}
 }
 
 /* Container */
 .container {
+    position: relative;
     backdrop-filter: blur(15px);
     background: rgba(255,255,255,0.08);
     padding: 30px;
@@ -46,7 +66,6 @@ h1 {
 }
 
 /* Inputs */
-input[type="file"],
 input[type="text"] {
     width: 100%;
     padding: 10px;
@@ -74,7 +93,7 @@ button:hover {
     transform: scale(1.05);
 }
 
-/* Progress Bar */
+/* Progress */
 .progress {
     width: 100%;
     height: 6px;
@@ -118,12 +137,20 @@ button:hover {
 
     <!-- 📄 Upload File -->
     <h3>📄 Upload File</h3>
-    <input type="file" id="file">
+
+    <input type="file" id="file" hidden>
+    <button onclick="document.getElementById('file').click()">📄 Choose File</button>
+    <div id="fileName" style="font-size:12px;"></div>
+
     <button onclick="uploadFiles()">Upload File</button>
 
     <!-- 📂 Upload Folder -->
     <h3 style="margin-top:15px;">📂 Upload Folder</h3>
-    <input type="file" id="folder" webkitdirectory multiple>
+
+    <input type="file" id="folder" webkitdirectory multiple hidden>
+    <button onclick="document.getElementById('folder').click()">📂 Choose Folder</button>
+    <div id="folderName" style="font-size:12px;"></div>
+
     <button onclick="uploadFolder()">Upload Folder</button>
 
     <!-- Progress -->
@@ -149,25 +176,29 @@ button:hover {
 </div>
 
 <script>
+// Show selected file name
+document.getElementById("file").addEventListener("change", function() {
+    let file = this.files[0];
+    document.getElementById("fileName").innerText =
+        file ? file.name : "";
+});
+
+// Show folder info
+document.getElementById("folder").addEventListener("change", function() {
+    let files = this.files;
+    document.getElementById("folderName").innerText =
+        files.length + " files selected 📂";
+});
+
 function uploadFiles() {
     let files = document.getElementById("file").files;
-
-    if (files.length === 0) {
-        alert("Select file");
-        return;
-    }
-
+    if (files.length === 0) return alert("Select file");
     uploadToServer(files);
 }
 
 function uploadFolder() {
     let files = document.getElementById("folder").files;
-
-    if (files.length === 0) {
-        alert("Select folder");
-        return;
-    }
-
+    if (files.length === 0) return alert("Select folder");
     uploadToServer(files);
 }
 
@@ -199,11 +230,7 @@ function uploadToServer(files) {
 
 function restore() {
     let name = document.getElementById("filename").value;
-
-    if (!name) {
-        alert("Enter filename");
-        return;
-    }
+    if (!name) return alert("Enter filename");
 
     fetch("/restore/" + name)
     .then(res => {
