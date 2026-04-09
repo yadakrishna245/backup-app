@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Backup App Pro</title>
+<title>Backup App - Secure Your Data</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -13,54 +13,74 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* 🌌 Space Background */
 body {
     height: 100vh;
-    background: linear-gradient(135deg, #0f2027, #2c5364);
+    background: radial-gradient(circle at top, #0f2027, #000000);
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
+}
+
+/* Stars */
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: transparent url('https://www.transparenttextures.com/patterns/stardust.png');
+    animation: moveStars 60s linear infinite;
+}
+
+@keyframes moveStars {
+    from {background-position: 0 0;}
+    to {background-position: 1000px 1000px;}
 }
 
 /* Glass Card */
 .container {
-    backdrop-filter: blur(20px);
-    background: rgba(255,255,255,0.1);
+    position: relative;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.08);
     padding: 30px;
     border-radius: 20px;
     width: 380px;
-    color: #fff;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 /* Title */
 h1 {
+    margin-bottom: 10px;
+}
+
+/* Description */
+.desc {
+    font-size: 13px;
     margin-bottom: 20px;
+    color: #ccc;
 }
 
-/* Drag Drop Box */
-.drop-area {
-    border: 2px dashed rgba(255,255,255,0.5);
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    transition: 0.3s;
-}
-
-.drop-area:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-input[type="file"] {
-    display: none;
-}
-
-.btn {
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
+/* Inputs */
+input[type="file"],
+input[type="text"] {
     width: 100%;
-    margin-top: 10px;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 8px;
     cursor: pointer;
     background: linear-gradient(135deg, #00c6ff, #0072ff);
     color: white;
@@ -68,39 +88,21 @@ input[type="file"] {
     transition: 0.3s;
 }
 
-.btn:hover {
+button:hover {
     transform: scale(1.05);
-}
-
-/* Input */
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    margin-top: 10px;
-}
-
-/* Progress Bar */
-.progress {
-    width: 100%;
-    height: 6px;
-    background: rgba(255,255,255,0.2);
-    margin-top: 10px;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    width: 0%;
-    background: #00ffcc;
 }
 
 /* Status */
 .status {
-    margin-top: 10px;
-    font-size: 14px;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+/* Footer */
+.footer {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #aaa;
 }
 
 </style>
@@ -109,75 +111,65 @@ input[type="text"] {
 <body>
 
 <div class="container">
-    <h1>☁️ Backup Pro</h1>
+
+    <h1>☁️ Backup App</h1>
+
+    <div class="desc">
+        🔐 Keep your files safe, secure, and always accessible.  
+        Backup today to avoid losing important data tomorrow.
+    </div>
 
     <!-- Upload -->
-    <div class="drop-area" onclick="fileInput.click()">
-        <p>📂 Drag & Drop or Click</p>
-        <input type="file" id="fileInput">
-    </div>
-
-    <button class="btn" onclick="upload()">Upload</button>
-
-    <div class="progress">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <div class="status" id="uploadStatus"></div>
+    <h3>📤 Upload File</h3>
+    <input type="file" id="file">
+    <button onclick="upload()">Upload</button>
+    <div id="uploadStatus" class="status"></div>
 
     <!-- Restore -->
-    <h3 style="margin-top:20px;">🔄 Restore File</h3>
+    <h3 style="margin-top:15px;">📥 Restore File</h3>
     <input type="text" id="filename" placeholder="Enter filename">
-    <button class="btn" onclick="restore()">Download</button>
+    <button onclick="restore()">Download</button>
+    <div id="restoreStatus" class="status"></div>
 
-    <div class="status" id="restoreStatus"></div>
+    <!-- Contact -->
+    <div class="footer">
+        📞 8431825539 | Krishna <br>
+        📍 Bangalore, India
+    </div>
 
 </div>
 
 <script>
-let fileInput = document.getElementById("fileInput");
-let progressBar = document.getElementById("progressBar");
-
-/* Drag Drop Support */
-document.querySelector(".drop-area").addEventListener("dragover", e => {
-    e.preventDefault();
-});
-
-document.querySelector(".drop-area").addEventListener("drop", e => {
-    e.preventDefault();
-    fileInput.files = e.dataTransfer.files;
-});
-
-/* Upload with Progress */
 function upload() {
-    let file = fileInput.files[0];
-    if (!file) return alert("Select file");
+    let file = document.getElementById("file").files[0];
+
+    if (!file) {
+        alert("Please select a file");
+        return;
+    }
 
     let formData = new FormData();
     formData.append("file", file);
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/upload");
-
-    xhr.upload.onprogress = function(e) {
-        let percent = (e.loaded / e.total) * 100;
-        progressBar.style.width = percent + "%";
-    };
-
-    xhr.onload = () => {
-        document.getElementById("uploadStatus").innerText = "✅ Uploaded!";
-    };
-
-    xhr.onerror = () => {
-        document.getElementById("uploadStatus").innerText = "❌ Failed!";
-    };
-
-    xhr.send(formData);
+    fetch("/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => {
+        document.getElementById("uploadStatus").innerText = "✅ Uploaded successfully!";
+    })
+    .catch(() => {
+        document.getElementById("uploadStatus").innerText = "❌ Upload failed!";
+    });
 }
 
-/* Restore */
 function restore() {
     let name = document.getElementById("filename").value;
+
+    if (!name) {
+        alert("Enter filename");
+        return;
+    }
 
     fetch("/restore/" + name)
     .then(res => res.blob())
@@ -191,7 +183,7 @@ function restore() {
         document.getElementById("restoreStatus").innerText = "✅ Downloaded!";
     })
     .catch(() => {
-        document.getElementById("restoreStatus").innerText = "❌ Not found!";
+        document.getElementById("restoreStatus").innerText = "❌ File not found!";
     });
 }
 </script>
