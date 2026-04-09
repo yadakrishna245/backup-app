@@ -13,44 +13,28 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* 🌌 Space Background */
+/* 🔥 Data Backup Background */
 body {
     height: 100vh;
-    background: radial-gradient(circle at top, #0f2027, #000000);
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
+    url('https://img.freepik.com/free-photo/cloud-computing-concept-with-hand-holding-tablet_23-2149204438.jpg');
+    background-size: cover;
+    background-position: center;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Stars Animation */
-body::before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: url('https://www.transparenttextures.com/patterns/stardust.png');
-    opacity: 0.4;
-    animation: moveStars 60s linear infinite;
-}
-
-@keyframes moveStars {
-    from {background-position: 0 0;}
-    to {background-position: 1000px 1000px;}
 }
 
 /* Container */
 .container {
-    position: relative;
     backdrop-filter: blur(15px);
-    background: rgba(255,255,255,0.08);
+    background: rgba(0,0,0,0.6);
     padding: 30px;
     border-radius: 20px;
     width: 400px;
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
 }
 
 /* Title */
@@ -66,6 +50,7 @@ h1 {
 }
 
 /* Inputs */
+input[type="file"],
 input[type="text"] {
     width: 100%;
     padding: 10px;
@@ -75,7 +60,7 @@ input[type="text"] {
     outline: none;
 }
 
-/* Button */
+/* Buttons */
 button {
     width: 100%;
     padding: 12px;
@@ -135,22 +120,14 @@ button:hover {
         Backup today to avoid losing important data tomorrow.
     </div>
 
-    <!-- 📄 Upload File -->
+    <!-- Upload File -->
     <h3>📄 Upload File</h3>
-
-    <input type="file" id="file" hidden>
-    <button onclick="document.getElementById('file').click()">📄 Choose File</button>
-    <div id="fileName" style="font-size:12px;"></div>
-
+    <input type="file" id="file">
     <button onclick="uploadFiles()">Upload File</button>
 
-    <!-- 📂 Upload Folder -->
+    <!-- Upload Folder -->
     <h3 style="margin-top:15px;">📂 Upload Folder</h3>
-
-    <input type="file" id="folder" webkitdirectory multiple hidden>
-    <button onclick="document.getElementById('folder').click()">📂 Choose Folder</button>
-    <div id="folderName" style="font-size:12px;"></div>
-
+    <input type="file" id="folder" webkitdirectory multiple>
     <button onclick="uploadFolder()">Upload Folder</button>
 
     <!-- Progress -->
@@ -176,20 +153,6 @@ button:hover {
 </div>
 
 <script>
-// Show selected file name
-document.getElementById("file").addEventListener("change", function() {
-    let file = this.files[0];
-    document.getElementById("fileName").innerText =
-        file ? file.name : "";
-});
-
-// Show folder info
-document.getElementById("folder").addEventListener("change", function() {
-    let files = this.files;
-    document.getElementById("folderName").innerText =
-        files.length + " files selected 📂";
-});
-
 function uploadFiles() {
     let files = document.getElementById("file").files;
     if (files.length === 0) return alert("Select file");
