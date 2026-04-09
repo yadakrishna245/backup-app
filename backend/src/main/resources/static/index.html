@@ -1,178 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Cloud Backup App</title>
+<meta charset="UTF-8">
+<title>Backup App Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- 🔥 Cache Fix -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-    <!-- Responsive -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+body {
+    height: 100vh;
+    background: linear-gradient(135deg, #0f2027, #2c5364);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+/* Glass Card */
+.container {
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 20px;
+    width: 380px;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    text-align: center;
+}
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
+/* Title */
+h1 {
+    margin-bottom: 20px;
+}
 
-        body {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* Drag Drop Box */
+.drop-area {
+    border: 2px dashed rgba(255,255,255,0.5);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
 
-        .container {
-            background: #fff;
-            padding: 30px;
-            border-radius: 15px;
-            width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            text-align: center;
-        }
+.drop-area:hover {
+    background: rgba(255,255,255,0.1);
+}
 
-        h1 {
-            margin-bottom: 20px;
-            color: #333;
-        }
+input[type="file"] {
+    display: none;
+}
 
-        .section {
-            margin: 20px 0;
-        }
+.btn {
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
 
-        input[type="file"],
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            outline: none;
-        }
+.btn:hover {
+    transform: scale(1.05);
+}
 
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* Input */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-top: 10px;
+}
 
-        button:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
+/* Progress Bar */
+.progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    margin-top: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-        .status {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: 500;
-        }
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #00ffcc;
+}
 
-        .success {
-            color: green;
-        }
+/* Status */
+.status {
+    margin-top: 10px;
+    font-size: 14px;
+}
 
-        .error {
-            color: red;
-        }
-
-        .icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .footer {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #777;
-        }
-
-    </style>
+</style>
 </head>
 
 <body>
 
 <div class="container">
-    <h1>☁️ Backup App</h1>
+    <h1>☁️ Backup Pro</h1>
 
-    <!-- Upload Section -->
-    <div class="section">
-        <div class="icon">📤</div>
-        <h3>Upload File</h3>
-        <input type="file" id="file"/>
-        <button onclick="upload()">Upload</button>
-        <div id="uploadStatus" class="status"></div>
+    <!-- Upload -->
+    <div class="drop-area" onclick="fileInput.click()">
+        <p>📂 Drag & Drop or Click</p>
+        <input type="file" id="fileInput">
     </div>
 
-    <!-- Restore Section -->
-    <div class="section">
-        <div class="icon">📥</div>
-        <h3>Restore File</h3>
-        <input type="text" id="filename" placeholder="Enter filename"/>
-        <button onclick="restore()">Download</button>
-        <div id="restoreStatus" class="status"></div>
+    <button class="btn" onclick="upload()">Upload</button>
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
     </div>
 
-    <div class="footer">
-        Version 2.0 🚀
-    </div>
+    <div class="status" id="uploadStatus"></div>
+
+    <!-- Restore -->
+    <h3 style="margin-top:20px;">🔄 Restore File</h3>
+    <input type="text" id="filename" placeholder="Enter filename">
+    <button class="btn" onclick="restore()">Download</button>
+
+    <div class="status" id="restoreStatus"></div>
+
 </div>
 
 <script>
-function upload() {
-    let file = document.getElementById("file").files[0];
+let fileInput = document.getElementById("fileInput");
+let progressBar = document.getElementById("progressBar");
 
-    if (!file) {
-        alert("Please select a file");
-        return;
-    }
+/* Drag Drop Support */
+document.querySelector(".drop-area").addEventListener("dragover", e => {
+    e.preventDefault();
+});
+
+document.querySelector(".drop-area").addEventListener("drop", e => {
+    e.preventDefault();
+    fileInput.files = e.dataTransfer.files;
+});
+
+/* Upload with Progress */
+function upload() {
+    let file = fileInput.files[0];
+    if (!file) return alert("Select file");
 
     let formData = new FormData();
     formData.append("file", file);
 
-    fetch("/upload?v=2", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => {
-        if (res.ok) {
-            document.getElementById("uploadStatus").innerHTML = "<span class='success'>✅ File uploaded successfully!</span>";
-        } else {
-            throw new Error();
-        }
-    })
-    .catch(() => {
-        document.getElementById("uploadStatus").innerHTML = "<span class='error'>❌ Upload failed!</span>";
-    });
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/upload");
+
+    xhr.upload.onprogress = function(e) {
+        let percent = (e.loaded / e.total) * 100;
+        progressBar.style.width = percent + "%";
+    };
+
+    xhr.onload = () => {
+        document.getElementById("uploadStatus").innerText = "✅ Uploaded!";
+    };
+
+    xhr.onerror = () => {
+        document.getElementById("uploadStatus").innerText = "❌ Failed!";
+    };
+
+    xhr.send(formData);
 }
 
+/* Restore */
 function restore() {
     let name = document.getElementById("filename").value;
 
-    if (!name) {
-        alert("Enter filename");
-        return;
-    }
-
-    fetch("/restore/" + name + "?v=2")
-    .then(res => {
-        if (!res.ok) throw new Error();
-        return res.blob();
-    })
+    fetch("/restore/" + name)
+    .then(res => res.blob())
     .then(blob => {
         let url = window.URL.createObjectURL(blob);
         let a = document.createElement("a");
@@ -180,10 +188,10 @@ function restore() {
         a.download = name;
         a.click();
 
-        document.getElementById("restoreStatus").innerHTML = "<span class='success'>✅ File downloaded!</span>";
+        document.getElementById("restoreStatus").innerText = "✅ Downloaded!";
     })
     .catch(() => {
-        document.getElementById("restoreStatus").innerHTML = "<span class='error'>❌ File not found!</span>";
+        document.getElementById("restoreStatus").innerText = "❌ Not found!";
     });
 }
 </script>
