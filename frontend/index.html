@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <title>Cloud Backup App</title>
 
+    <!-- 🔥 Cache Fix -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!-- Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -53,7 +61,7 @@
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: none;
             border-radius: 8px;
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -71,12 +79,26 @@
         .status {
             margin-top: 10px;
             font-size: 14px;
+            font-weight: 500;
+        }
+
+        .success {
             color: green;
+        }
+
+        .error {
+            color: red;
         }
 
         .icon {
             font-size: 40px;
             margin-bottom: 10px;
+        }
+
+        .footer {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #777;
         }
 
     </style>
@@ -104,6 +126,10 @@
         <button onclick="restore()">Download</button>
         <div id="restoreStatus" class="status"></div>
     </div>
+
+    <div class="footer">
+        Version 2.0 🚀
+    </div>
 </div>
 
 <script>
@@ -118,15 +144,19 @@ function upload() {
     let formData = new FormData();
     formData.append("file", file);
 
-    fetch("/upload", {
+    fetch("/upload?v=2", {
         method: "POST",
         body: formData
     })
     .then(res => {
-        document.getElementById("uploadStatus").innerText = "✅ File uploaded successfully!";
+        if (res.ok) {
+            document.getElementById("uploadStatus").innerHTML = "<span class='success'>✅ File uploaded successfully!</span>";
+        } else {
+            throw new Error();
+        }
     })
     .catch(() => {
-        document.getElementById("uploadStatus").innerText = "❌ Upload failed!";
+        document.getElementById("uploadStatus").innerHTML = "<span class='error'>❌ Upload failed!</span>";
     });
 }
 
@@ -138,8 +168,11 @@ function restore() {
         return;
     }
 
-    fetch("/restore/" + name)
-    .then(res => res.blob())
+    fetch("/restore/" + name + "?v=2")
+    .then(res => {
+        if (!res.ok) throw new Error();
+        return res.blob();
+    })
     .then(blob => {
         let url = window.URL.createObjectURL(blob);
         let a = document.createElement("a");
@@ -147,13 +180,16 @@ function restore() {
         a.download = name;
         a.click();
 
-        document.getElementById("restoreStatus").innerText = "✅ File downloaded!";
+        document.getElementById("restoreStatus").innerHTML = "<span class='success'>✅ File downloaded!</span>";
     })
     .catch(() => {
-        document.getElementById("restoreStatus").innerText = "❌ File not found!";
+        document.getElementById("restoreStatus").innerHTML = "<span class='error'>❌ File not found!</span>";
     });
 }
 </script>
 
 </body>
 </html>
+~
+~
+
